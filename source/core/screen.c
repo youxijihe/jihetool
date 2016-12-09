@@ -167,10 +167,10 @@ void screen_init() {
         tex->param = GPU_TEXTURE_MAG_FILTER(GPU_LINEAR) | GPU_TEXTURE_MIN_FILTER(GPU_LINEAR) | GPU_TEXTURE_WRAP_S(GPU_CLAMP_TO_EDGE) | GPU_TEXTURE_WRAP_T(GPU_CLAMP_TO_EDGE);
     }
 	**/
-    fontTexTmp = calloc(1,sizeof(C3D_Tex));
-	fontTexTmp.fmt = GPU_RGBA8;
-	fontTexTmp.data = calloc(16*16,4);
-	fontTexTmp.height = 16;
+    fontTexTmp = (C3D_Tex*)calloc(1,sizeof(C3D_Tex));
+	fontTexTmp->fmt = GPU_RGBA8;
+	fontTexTmp->data = calloc(16*16,4);
+	fontTexTmp->height = 16;
 	fontTexTmp->param = GPU_TEXTURE_MAG_FILTER(GPU_LINEAR) | GPU_TEXTURE_MIN_FILTER(GPU_LINEAR) | GPU_TEXTURE_WRAP_S(GPU_CLAMP_TO_EDGE) | GPU_TEXTURE_WRAP_T(GPU_CLAMP_TO_EDGE);
 
     FILE* fd = screen_open_resource("textcolor.cfg");
@@ -702,7 +702,7 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
         p += units;
 
 		unifont_get_cell(code,&cell);
-        if(code == '\n' || (wrap && currX + scaleX * cell.Width >= wrapX)) {
+        if(code == '\n' || (wrap && currX + scaleX * cell.width >= wrapX)) {
             lastAlign = p;  
 
             screen_get_string_size_internal(&lineWidth, NULL, (const char*) p, scaleX, scaleY, true, wrap, wrapX);
@@ -724,13 +724,8 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
                 lastAlign = p;
             }
 
-            fontGlyphPos_s data;
-            fontCalcGlyphPos(&data, fontGlyphIndexFromCodePoint(code), GLYPH_POS_CALC_VTXCOORD, scaleX, scaleY);
-
-            if(data.sheetIndex != lastSheet) {
-                lastSheet = data.sheetIndex;
-                C3D_TexBind(0, &glyphSheets[lastSheet]);
-            }
+            u8* data = cell.glyphaData;
+            C3D_TexBind(0, fontTexTmp);
 
             for(u32 i = 0; i < num; i++) {
                 screen_draw_quad(currX + data.vtxcoord.left, y + data.vtxcoord.top, currX + data.vtxcoord.right, y + data.vtxcoord.bottom, data.texcoord.left, data.texcoord.top, data.texcoord.right, data.texcoord.bottom);
@@ -738,7 +733,7 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
                 currX += data.xAdvance;
             }
         }
-		free(cell.graphData);
+		free(cell.glyphData);
     }
 
     env = C3D_GetTexEnv(0);
