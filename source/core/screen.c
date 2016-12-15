@@ -255,6 +255,8 @@ void screen_init() {
     screen_load_texture_file(TEXTURE_WIFI_1, "wifi1.png", true);
     screen_load_texture_file(TEXTURE_WIFI_2, "wifi2.png", true);
     screen_load_texture_file(TEXTURE_WIFI_3, "wifi3.png", true);
+
+	//icon texture
 }
 
 void screen_exit() {
@@ -605,6 +607,8 @@ static void screen_get_string_size_internal(float* width, float* height, const c
     float h = 0;
     float lineWidth = 0;
 
+	int fontWidth,fontHeight;
+
     if(text != NULL) {
         h = scaleY * 16;
 
@@ -615,7 +619,8 @@ static void screen_get_string_size_internal(float* width, float* height, const c
         while(*p && (units = decode_utf8(&code, p)) != -1 && code > 0) {
             p += units;
 
-            if(code == '\n' || (wrap && lineWidth + scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth >= wrapX)) {
+			unifont_get_size(&fontWidth,&fontHeight,code);
+            if(code == '\n' || (wrap && lineWidth + scaleX * fontWidth >= wrapX)) {
                 lastAlign = p;
 
                 if(lineWidth > w) {
@@ -640,7 +645,7 @@ static void screen_get_string_size_internal(float* width, float* height, const c
                     lastAlign = p;
                 }
 
-                lineWidth += (scaleX * fontGetCharWidthInfo(fontGlyphIndexFromCodePoint(code))->charWidth) * num;
+                lineWidth += (scaleX * fontWidth) * num;
             }
         }
     }
@@ -691,13 +696,14 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
         currX += (stringWidth - lineWidth) / 2;
     }
 
-    int lastSheet = -1;
-
+	int i,j,k;
+	u8 mask,tmpData;
     const uint8_t* p = (const uint8_t*) text;
     const uint8_t* lastAlign = p;
     u32 code = 0;
     ssize_t units = -1;
 	FontCell cell;
+	int defaultColor = 0xff000000;
     while(*p && (units = decode_utf8(&code, p)) != -1 && code > 0) {
         p += units;
 
@@ -715,6 +721,7 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
             y += scaleY * 16;
         }
 
+		  
         if(code != '\n') {
             u32 num = 1;
             if(code == '\t') {
@@ -723,14 +730,29 @@ static void screen_draw_string_internal(const char* text, float x, float y, floa
 
                 lastAlign = p;
             }
-
-            u8* data = cell.glyphaData;
+			int rowNum = cell.width/8;
+            u8* data = cell.glyphData;
+			for(i = 0; i < 16; i++) {
+				for(j = 0; j < rowNum; j++) {
+					mask = 0x80;
+					tmpData = data[j*16 + i];
+					for(k = 0; k < 8; k++) {
+						if(tmpData & mask) {
+							memcpy(fontTexTmp->data + j*i*8 + k,&colorConfig[colorId],4);
+						}else{
+							memcpy(fontTexTmp->data + j*i*8 + k,&defaultColor,4);
+						}
+						mask >>= 1;
+					}
+				}
+			}
+			fontTexTmp->width = cell.width;
             C3D_TexBind(0, fontTexTmp);
 
             for(u32 i = 0; i < num; i++) {
-                screen_draw_quad(currX + data.vtxcoord.left, y + data.vtxcoord.top, currX + data.vtxcoord.right, y + data.vtxcoord.bottom, data.texcoord.left, data.texcoord.top, data.texcoord.right, data.texcoord.bottom);
+                screen_draw_quad(currX, y + cell.height, currX + cell.width, y, 0, cell.height, cell.width, 0);
 
-                currX += data.xAdvance;
+                currX += cell.width;
             }
         }
 		free(cell.glyphData);

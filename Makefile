@@ -15,7 +15,7 @@ endif
 
 # COMMON CONFIGURATION #
 
-NAME := FBI
+NAME := JiheTool
 
 BUILD_DIR := build
 OUTPUT_DIR := output
@@ -30,19 +30,17 @@ LIBRARIES := citro3d ctru m
 BUILD_FLAGS :=
 RUN_FLAGS :=
 
-VERSION_PARTS := $(subst ., ,$(shell git describe --tags --abbrev=0))
-
-VERSION_MAJOR := $(word 1, $(VERSION_PARTS))
-VERSION_MINOR := $(word 2, $(VERSION_PARTS))
-VERSION_MICRO := $(word 3, $(VERSION_PARTS))
+VERSION_MAJOR := 2
+VERSION_MINOR := 4
+VERSION_MICRO := 2
 
 # 3DS CONFIGURATION #
 
 TITLE := $(NAME)
 DESCRIPTION := Open source CIA installer.
 AUTHOR := Steveice10
-PRODUCT_CODE := CTR-P-CFBI
-UNIQUE_ID := 0xF8001
+PRODUCT_CODE := CTR-P-JHTL
+UNIQUE_ID := 0xF8101
 
 SYSTEM_MODE := 64MB
 SYSTEM_MODE_EXT := Legacy
