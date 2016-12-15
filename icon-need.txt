@@ -2,23 +2,29 @@
 
 图标内容：
 
-SD卡管理
-TWL分区
-	TWL文件
-	TWL声音
-	TWL图片
-CTR分区
-NAND导出
-应用游戏
-	Titles
-	待定
-	凭据
-	数据库
-数据管理
-	系统数据
-	额外数据
-安装
-	网络安装
-	QR码安装
-升级
+SD卡管理           画一个SD卡图标
+TWL分区            一个芯片带TWL文字
+	TWL文件        文档或文件图标左上角带TWL文字
+	TWL声音        音符图标左上角带TWL文字
+	TWL图片        图片图标左上角带TWL文字
+CTR分区            一个芯片带CTR文字
+NAND导出           一个盘符加弹出向上箭头
+应用游戏           游戏手柄
+	Titles         盒子
+	待定           盒子上写个P字
+	凭据           一张收据字条图标
+	数据库         数据库图标
+数据管理           数据库图标右下角加把手或齿轮 
+	系统数据       数据库图标右下角加SYS文字
+	额外数据       数据库图标右下角加EXT文字
+安装                
+	网络安装        一个地球（3ds的浏览器图标）加一个下载向下的箭头
+	QR码安装        一个二维码图标
+升级                升级箭头旋转图标
 
+
+芯片图参考：http://img.zcool.cn/community/01734756c841bc32f875520f474f3a.jpg
+二维码：http://img5.imgtn.bdimg.com/it/u=2976782369,217827492&fm=21&gp=0.jpg
+手柄盒子购物袋图标：http://img.haozhuodao.com/uploads/140425/148175-1404251635423c.jpg
+数据库图标：http://img5.imgtn.bdimg.com/it/u=2523503762,849790299&fm=23&gp=0.jpg
+升级旋转图标：http://thumbs.dreamstime.com/z/none-42115328.jpg
