@@ -68,6 +68,31 @@ static FILE* screen_open_resource(const char* path) {
     }
 }
 
+void mapChineseFont()
+{
+	FILE* fd = screen_open_resource("font.bcfnt");
+	if(fd == NULL) {
+        util_panic("Failed to map font: font.bcfnt");		
+	}
+
+    TGLP_s* glyphInfo = fontGetGlyphInfo();
+    glyphSheets = calloc(glyphInfo->nSheets, sizeof(C3D_Tex));
+    if(glyphSheets == NULL) {
+        util_panic("Failed to allocate font glyph texture data.");
+        return;
+    }
+
+    for(int i = 0; i < glyphInfo->nSheets; i++) {
+        C3D_Tex* tex = &glyphSheets[i];
+        tex->data = fontGetGlyphSheetTex(i);
+        tex->fmt = (GPU_TEXCOLOR) glyphInfo->sheetFmt;
+        tex->size = glyphInfo->sheetSize;
+        tex->width = glyphInfo->sheetWidth;
+        tex->height = glyphInfo->sheetHeight;
+        tex->param = GPU_TEXTURE_MAG_FILTER(GPU_LINEAR) | GPU_TEXTURE_MIN_FILTER(GPU_LINEAR) | GPU_TEXTURE_WRAP_S(GPU_CLAMP_TO_EDGE) | GPU_TEXTURE_WRAP_T(GPU_CLAMP_TO_EDGE);
+    }
+}
+
 void screen_init() {
     if(!C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * 4)) {
         util_panic("Failed to initialize the GPU.");
